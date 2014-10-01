@@ -330,21 +330,23 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         for (Object lstCaja : lstCajas ){
             Brick briCaja = (Brick) lstCaja;
             
-            if (proBola.colisiona(briCaja) && briCaja.getEstado() < 1){
-                if (proBola.getY() <= briCaja.getY() + briCaja.getAlto()){
+            if (briCaja.getEstado() < 1){
+                if (briCaja.colisionaAbajo(proBola)){
                     proyectilChocaArriba();
+                    briCaja.setEstado(1);
                 }
-                else if (proBola.getY() + proBola.getAlto() >= briCaja.getY()){
+                else if (briCaja.colisionaArriba(proBola)){
                     proyectilChocaAbajo();
+                    briCaja.setEstado(1);
                 }
-
-                else if (proBola.getX() + proBola.getAncho() >= briCaja.getX()){
+                else if (briCaja.colisionaIzquierda(proBola)){
                     proyectilChocaDerecha();
+                    briCaja.setEstado(1);
                 }
-                else if(proBola.getX() >= briCaja.getX() + briCaja.getAncho()){
+                else if (briCaja.colisionaDerecha(proBola)){
                     proyectilChocaIzquierda();
+                    briCaja.setEstado(1);
                 }
-                briCaja.setEstado(1);
             }
         }
     }
