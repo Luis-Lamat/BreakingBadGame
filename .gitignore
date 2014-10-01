@@ -4,3 +4,5 @@ build/built-jar.properties
 build/*
 build.xml
 save_file.txt
+/nbproject/private/
+/dist/

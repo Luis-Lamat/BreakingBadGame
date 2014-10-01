@@ -30,16 +30,17 @@ import javax.swing.JFrame;
 public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
 
     /* objetos para manejar el buffer del Applet y este no parpadee */
+    private int ValorFor;
     private Image    imaImagenApplet;   // Imagen a proyectar en Applet	
     private Graphics graGraficaApplet;  // Objeto grafico de la Imagen
     private int iVidas;                 // Vidas del juego
     private int iScore;                 // Score del juego
-    private int iDireccion;             // Direccion de la Nena
-    private int iAcumCorredores;        // Corredores acumulados en la colision
-    private Personaje perNena;          // Objeto Nena de la clase personaje
-    private LinkedList lstCaminadores;  // Lista de 8 a 10 caminadores
-    private LinkedList lstCorredores;   // Lista de 10 a 15 corredores
-    private boolean bPausado;           // Pausa
+    private int iDireccion;             // Direccion de la Tabla
+    private LinkedList lstCajas;        // Lista Cajas
+    private Personaje perBola;          // Objeto Bola de la clase personaje
+    private Personaje perTabla;         // Objeto Tabla de la clase personaje
+    private Personaje perCaja;          // Objeto Caja de la clase personaje
+    //private boolean bPausado;         // Pausa
     
     /* objetos de audio */
     private SoundClip aucSonidoSuccess; // Objeto AudioClip sonido Caminador
@@ -59,17 +60,88 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void init() {
         // hago el applet de un tamaño 500,500
-        setSize(700, 800);
+        setSize(900, 800);
         
-       
+        iScore = 0;
+        iVidas = 5;
+        lstCajas = new LinkedList();
         
-              
-        // introducir instrucciones para iniciar juego
+        // Crear imagen de Bola
+        URL urlImagenBola = this.getClass().getResource("Black Cube.jpg");
+        perBola = new Personaje(getWidth() / 2, getHeight()  / 2,
+                Toolkit.getDefaultToolkit().getImage(urlImagenBola));
+        perBola.arriba();
+        
+        // Crear imagen de Tabla
+        URL urlImagenTabla = this.getClass().getResource("BrownTable.jpg");
+        perTabla = new Personaje((getWidth() / 2), (getHeight()  / 4) * 3,
+                Toolkit.getDefaultToolkit().getImage(urlImagenTabla));
+        perTabla.setX((getWidth() / 2) - perTabla.getAncho() / 2);
+        
+        // Crear imagen de Cajas
+        creandoCajas();
+        
         // se define el background en color amarillo
-	setBackground (Color.yellow);
+	setBackground (Color.white);
         addKeyListener(this);
     }
 	
+    public void creandoCajas() {
+        int iXTemp = 0;
+        int iYTemp = 0;
+        int iValInicial = 25;
+        int iSeparDePixeles = 5;
+        
+        URL urlImagenCaja = this.getClass().getResource("BrownTable.jpg");
+        for(int iI = 0; iI < 20; iI++) {
+            perCaja = new Personaje(100, 100,
+                Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
+            // Valores de X y Y despues de crear 
+            if(lstCajas.size() > 0) {
+                if (iI < 6) {
+                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
+                    perCaja.setY(100);
+                } 
+                else if (iI == 7) {
+                    perCaja.setX(iValInicial);
+                    perCaja.setY(100 + perCaja.getAlto() + iSeparDePixeles);
+                    }
+                else if (iI < 13 && iI > 7) {
+                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
+                    perCaja.setY(100 + perCaja.getAlto() + iSeparDePixeles);
+                }
+                else if (iI == 14) {
+                    perCaja.setX(iValInicial);
+                    perCaja.setY(100 + perCaja.getAlto() * 2 + 
+                            iSeparDePixeles * 2);
+                }
+                else if (iI < 20 && iI > 14) {
+                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
+                    perCaja.setY(100 + perCaja.getAlto() * 2 + 
+                            iSeparDePixeles * 2);
+                }
+                lstCajas.add(perCaja);
+                //se guarda valor de X temporal para siguiente caja
+                iXTemp = perCaja.getX();
+                //iYTemp = perCaja.getY();
+                ValorFor = iI;
+                if (iI == 6 || iI == 14) {
+                    iXTemp = iValInicial;
+                }
+                
+            }
+            //Valores de X y Y default
+            else {
+                perCaja.setX(iValInicial);
+                perCaja.setY(100);
+                //se guarda valor de X temporal para siguiente caja
+                iXTemp = perCaja.getX();
+                iYTemp = perCaja.getY();
+                lstCajas.add(perCaja);
+            }
+        }
+    }
+            
     /** 
      * start
      * 
@@ -102,10 +174,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                se checa si hubo colisiones para desaparecer jugadores o corregir
                movimientos y se vuelve a pintar todo
             */ 
-            if(!bPausado) {
-                actualiza();
-                checaColision();
-            }
+           
+            actualiza();
+            checaColision();
             repaint();
             try	{
                 // El thread se duerme.
@@ -124,57 +195,35 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * Metodo que actualiza la posicion del objeto elefante 
      * 
      */
-    public void actualiza(){
+    public void actualiza() {
         
-        // mueve a la nena de direccion
-        switch (iDireccion){
+        // mueve a la Tabla de direccion
+        switch (iDireccion) {
             case 1: {
-                perNena.arriba();
-                }
-                break;
+                perTabla.izquierda();
+            }
+            break;
             case 2: {
-                perNena.abajo();
-                }
-                break;
-            case 3: {
-                perNena.izquierda();
-                }
-                break;
-            case 4: {
-                perNena.derecha();
-                }
-                break;
+                perTabla.derecha();
+            }
+            break;
+        }
+        //mueve a la bola de direccion
+        if (perBola.getX() > getWidth()) {
+            perBola.izquierda();
+        }
+        else {
+            perBola.derecha();
+        }
+        if (perBola.getY() > getHeight()) {
+            perBola.arriba();
+        }
+        else {
+            perBola.abajo();
         }
         
-        // se mueven los caminadores
-        for (Object lstCaminador : lstCaminadores){
-            Personaje perCaminador = (Personaje) lstCaminador;
-            
-            // poniendo velocidad entre 3 y 5 cada vez que avanza
-            int iVel = (int) ((Math.random() * 2) + 3);
-            perCaminador.setVelocidad(iVel);
-            
-            // moviendo al personaje
-            perCaminador.derecha();
-        }
         
-        // se mueven los corredores
-        for (Object lstCorredor : lstCorredores){
-            Personaje perCorredor = (Personaje) lstCorredor;
-            
-            // poniendo velocidad ependiendo de las vidas
-            if (iVidas > 0) { 
-                perCorredor.setVelocidad(11/iVidas);
-            }
-            else {
-                perCorredor.setVelocidad(0);
-            }
-                           
-            // moviendo al personaje
-            perCorredor.abajo();
-        }
     }
-    
     
     /**
      * checaColision
@@ -184,7 +233,29 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * 
      */
     public void checaColision(){
+        //si tabla choca con 
+        if(perTabla.getX() < 0) {
+            perTabla.setX(0);
+        }
+        else if (perTabla.getX() + perTabla.getAncho() > getWidth()) {
+            perTabla.setX(getWidth() - perTabla.getAncho());
+        }
         
+        if (perBola.getX() > 0) {
+            perBola.izquierda();
+        }
+        else if(perBola.getX() < getWidth() - perBola.getX()) {
+            perBola.derecha();
+        }
+        if (perBola.getY() > 0 + 30) {
+            perBola.abajo();
+        }
+        else if (perBola.getY() < getHeight() - perBola.getY()) {
+            perBola.arriba();
+        }
+        if (perBola.colisiona(perTabla)) {
+            perBola.arriba();
+        }
     }
 	
     /**
@@ -204,21 +275,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                         this.getSize().height);
                 graGraficaApplet = imaImagenApplet.getGraphics ();
         }
-        
-        // creo imagen para el background
-        // URL urlImagenEspacio = this.getClass().getResource("espacio.jpg");
-        // Image imaImagenEspacio = Toolkit.getDefaultToolkit().getImage(urlImagenEspacio);
-        
-        // Despliego la imagen
-        // graGraficaApplet.drawImage(imaImagenEspacio, 0, 0, 
-        //        getWidth(), getHeight(), this);
 
         // Actualiza la imagen de fondo.
         graGraficaApplet.setColor (getBackground ());
-
+        graGraficaApplet.fillRect (0, 0, this.getSize().width, 
+                this.getSize().height);
+        
+        
         // Actualiza el Foreground.
         graGraficaApplet.setColor (getForeground());
         paint_buffer(graGraficaApplet);
+
+        // Dibuja la imagen actualizada
+        graGrafico.drawImage (imaImagenApplet, 0, 0, this);
         
 
         // Dibuja la imagen actualizada
@@ -236,39 +305,56 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * 
      */
     public void paint_buffer(Graphics g) {
+        // si la imagen ya se cargo
+        if (perBola != null && perTabla != null && lstCajas.size() > 0) {
+            
+            g.drawImage(perBola.getImagen() , perBola.getX(),
+                    perBola.getY(), this);
+            
+            g.drawImage(perTabla.getImagen() , perTabla.getX(),
+                    perTabla.getY(), this);
+            
+            for (Object objCajas : lstCajas) {
+                Personaje perCaja = (Personaje) objCajas;
+                g.drawImage(perCaja.getImagen() , perCaja.getX(),
+                    perCaja.getY(), this);
+            
+        }
+            
+        } // sino se ha cargado se dibuja un mensaje 
+        else {
+                //Da un mensaje mientras se carga el dibujo	
+                g.drawString("No se cargo la imagen..", 20, 20);
+        }
         
+        g.setColor(Color.red);
+        g.drawString("Score: " + iScore, 20, 50);
+        g.drawString("Vidas: " + iVidas, 20, 70);
+        g.drawString("For: "+ ValorFor, 200, 50);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
     }
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent keyEvent) {
+        if(keyEvent.getKeyCode() == KeyEvent.VK_A) {
+            iDireccion = 1;
+        }
+        if(keyEvent.getKeyCode() == KeyEvent.VK_D) {
+            iDireccion = 2;
+        }
     }
 
     
     @Override
     public void keyReleased(KeyEvent keyEvent) {
-        // si presiono W  (arriba)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_W) {
-            iDireccion = 1;
-        }   
-        // si presiono S  (abajo)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_S) {
-            iDireccion = 2;
-
-        } 
-        // si presiono A  (izquierda)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_A) { 
-            iDireccion = 3;
-        }
-        // si presiono D  (derecha)
-        if(keyEvent.getKeyCode() == KeyEvent.VK_D) { 
-            iDireccion = 4;
-        }
+        
+        
+        
         //si presiono P (Pausar)
         if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
-            bPausado = !bPausado;
+           // bPausado = !bPausado;
         }
         // si presiona G (save_file)
 //        if(keyEvent.getKeyCode() == KeyEvent.VK_G) { 

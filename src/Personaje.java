@@ -52,7 +52,7 @@ public class Personaje {
         this.iX = iX;
         this.iY = iY;
         imiIcono = icoImagen;
-        this.iVelocidad = 1;    // default 1 en velocidad
+        this.iVelocidad = 3;    // default 1 en velocidad
     }
     
     /**
