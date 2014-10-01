@@ -90,67 +90,36 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         proBola.setVelocidad(4);
         iDireccionProyectil = 0;
         
-        // Crear imagen de Cajas
-        creandoCajas();
+        // Crear imagen de Cajas en la posicion inicial de 255 , 100
+        creandoCajas(25,100,4,6);
+        
+        creandoCajas(25,300,4,6);
         
         // se define el background en color amarillo
 	setBackground (Color.white);
         addKeyListener(this);
     }
 	
-    public void creandoCajas() {
-        int iXTemp = 0;
-        int iYTemp = 0;
-        int iValInicial = 25;
-        int iSeparDePixeles = 5;
-        
+    public void creandoCajas(int iniX, int iniY, int iRows, int iCols) {
+               
+        int iSEPARACION_PIXELES = 5;
+        int iX;
+        int iY;
         URL urlImagenCaja = this.getClass().getResource("MethBox.jpg");
-        for(int iI = 0; iI < 20; iI++) {
-            briCaja = new Brick(100, 100,
-                Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
-            // Valores de X y Y despues de crear 
-            if(lstCajas.size() > 0) {
-                if (iI < 6) {
-                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
-                    briCaja.setY(100);
-                } 
-                else if (iI == 7) {
-                    briCaja.setX(iValInicial);
-                    briCaja.setY(100 + briCaja.getAlto() + iSeparDePixeles);
-                    }
-                else if (iI < 13 && iI > 7) {
-                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
-                    briCaja.setY(100 + briCaja.getAlto() + iSeparDePixeles);
-                }
-                else if (iI == 14) {
-                    briCaja.setX(iValInicial);
-                    briCaja.setY(100 + briCaja.getAlto() * 2 + 
-                            iSeparDePixeles * 2);
-                }
-                else if (iI < 20 && iI > 14) {
-                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
-                    briCaja.setY(100 + briCaja.getAlto() * 2 + 
-                            iSeparDePixeles * 2);
-                }
-                lstCajas.add(briCaja);
-                //se guarda valor de X temporal para siguiente caja
-                iXTemp = briCaja.getX();
-                //iYTemp = briCaja.getY();
-                ValorFor = iI;
-                if (iI == 6 || iI == 14) {
-                    iXTemp = iValInicial;
-                }
-                
-            }
-            //Valores de X y Y default
-            else {
-                briCaja.setX(iValInicial);
-                briCaja.setY(100);
-                //se guarda valor de X temporal para siguiente caja
-                iXTemp = briCaja.getX();
-                iYTemp = briCaja.getY();
-                lstCajas.add(briCaja);
-            }
+        Brick briCajaAux  = new Brick(0,0,
+                          Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
+        int iAlto  = briCajaAux.getAlto();
+        int iAncho = briCajaAux.getAncho();
+        
+        for (int iC = 0; iC < iRows; iC++){
+            iY = iniY + ((iAlto + iSEPARACION_PIXELES) * iC);
+            
+            for (int iR = 0; iR < iCols; iR++){
+                iX = iniX + ((iAncho + iSEPARACION_PIXELES) * iR);
+                briCaja = new Brick(iX, iY,
+                          Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
+                lstCajas.add(briCaja);               
+            }           
         }
     }
             
