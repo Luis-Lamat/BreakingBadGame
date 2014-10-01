@@ -41,7 +41,6 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private Proyectil perBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
     private Personaje perCaja;          // Objeto Caja de la clase personaje
-    private boolean ColisionTablaProy;  // TEST
     //private boolean bPausado;         // Pausa
     
     /* objetos de audio */
@@ -61,7 +60,6 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * a usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
-        ColisionTablaProy = false;
         
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
@@ -268,6 +266,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // llamada al metodo coliisona proyectil con tabla
         checaProyectilChocaConTabla();
+        
+        // llamada al metodo coliisona proyectil con ladrillos
+        checaProyectilChocaConBricks();
     }
     
     
@@ -300,7 +301,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     
     /**
-     * checaProyectilChocaConMuros
+     * checaProyectilChocaConTabla
      * 
      * Metodo usado para checar la colision del objeto Proyectil
      * con la tabla (jugador) del <code>JFrame</code>.
@@ -310,6 +311,34 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         if (perBola.colisiona(perTabla)){
             if (perBola.getY() + perBola.getAlto() >= perTabla.getY()){
                 proyectilChocaAbajo();
+            }
+        }
+    }
+    
+    /**
+     * checaProyectilChocaConBricks
+     * 
+     * Metodo usado para checar la colision del objeto Proyectil
+     * con los ladrillos superiores del <code>JFrame</code>.
+     * 
+     */    
+    public void checaProyectilChocaConBricks(){
+        for (Object lstCaja : lstCajas ){
+            Personaje perCaja = (Personaje) lstCaja;
+            if (perBola.colisiona(perCaja)){
+                if (perBola.getY() >= perCaja.getY() + perCaja.getAlto()){
+                    proyectilChocaArriba();
+                }
+                else if (perBola.getY() + perBola.getAlto() >= perCaja.getY()){
+                    proyectilChocaAbajo();
+                }
+
+                if (perBola.getX() + perBola.getAncho() >= perCaja.getX()){
+                    proyectilChocaDerecha();
+                }
+                else if(perBola.getX() >= perCaja.getX() + perCaja.getAncho()){
+                    proyectilChocaIzquierda();
+                }           
             }
         }
     }
@@ -432,7 +461,6 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         g.setColor(Color.red);
         g.drawString("Score: " + iScore, 20, 50);
         g.drawString("Vidas: " + iVidas, 20, 70);
-        g.drawString("Colision?: " + ColisionTablaProy, 20, 90);      
         g.drawString("For: "+ ValorFor, 200, 50);
     }
 
