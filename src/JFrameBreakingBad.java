@@ -36,6 +36,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private int iVidas;                 // Vidas del juego
     private int iScore;                 // Score del juego
     private int iDireccion;             // Direccion de la Tabla
+    private int iDireccionProyectil;    // Direccion del proyectil
     private LinkedList lstCajas;        // Lista Cajas
     private Personaje perBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
@@ -245,21 +246,6 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             perTabla.setX(getWidth() - perTabla.getAncho());
         }
         
-        if (perBola.getX() > 0) {
-            perBola.izquierda();
-        }
-        else if(perBola.getX() < getWidth() - perBola.getX()) {
-            perBola.derecha();
-        }
-        if (perBola.getY() > 0 + 30) {
-            perBola.abajo();
-        }
-        else if (perBola.getY() < getHeight() - perBola.getY()) {
-            perBola.arriba();
-        }
-        if (perBola.colisiona(perTabla)) {
-            perBola.arriba();
-        }
     }
 	
     /**
