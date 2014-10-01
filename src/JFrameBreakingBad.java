@@ -42,6 +42,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
     private Brick briCaja;          // Objeto Caja de la clase personaje
     private boolean ChocaAbajoBrick;
+    private String Text;
     //private boolean bPausado;         // Pausa
     
     /* objetos de audio */
@@ -63,6 +64,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     public void init() {
         
         ChocaAbajoBrick = false;
+        Text = "";
         
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
@@ -327,18 +329,16 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     public void checaProyectilChocaConBricks(){
         for (Object lstCaja : lstCajas ){
             Brick briCaja = (Brick) lstCaja;
+            
             if (proBola.colisiona(briCaja) && briCaja.getEstado() < 1){
-                if (proBola.getY() <= briCaja.getY() + briCaja.getAlto() && 
-                   (iDireccionProyectil == 1 || iDireccionProyectil == 2)){
+                if (proBola.getY() <= briCaja.getY() + briCaja.getAlto()){
                     proyectilChocaArriba();
                 }
-                else if (proBola.getY() + proBola.getAlto() >= briCaja.getY() &&
-                        (iDireccionProyectil == 3 || iDireccionProyectil == 4)){
-                    ChocaAbajoBrick = true;
+                else if (proBola.getY() + proBola.getAlto() >= briCaja.getY()){
                     proyectilChocaAbajo();
                 }
 
-                if (proBola.getX() + proBola.getAncho() >= briCaja.getX()){
+                else if (proBola.getX() + proBola.getAncho() >= briCaja.getX()){
                     proyectilChocaDerecha();
                 }
                 else if(proBola.getX() >= briCaja.getX() + briCaja.getAncho()){
@@ -355,7 +355,11 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * Metodo para checar si el proyectil choca por su lado superior
      */
     void proyectilChocaArriba() {
-        iDireccionProyectil = (iDireccionProyectil == 2) ? 4 : 3;     
+        if (iDireccionProyectil == 2)
+            iDireccionProyectil = 4;
+        else
+            iDireccionProyectil = 3; 
+        Text = "Choque Arriba!";
     }
     
     /**
@@ -363,7 +367,11 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * Metodo para checar si el proyectil choca por su lado inferior
      */
     void proyectilChocaAbajo() {
-        iDireccionProyectil = (iDireccionProyectil == 4) ? 2 : 1;
+        if (iDireccionProyectil == 4)
+            iDireccionProyectil = 2;
+        else
+            iDireccionProyectil = 1; 
+        Text = "Choque Abajo!";
     }
     
     /**
@@ -371,7 +379,11 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * Metodo para checar si el proyectil choca por su lado izquierdo
      */
     void proyectilChocaIzquierda() {
-        iDireccionProyectil = (iDireccionProyectil == 1) ? 2 : 4;    
+        if (iDireccionProyectil == 1)
+            iDireccionProyectil = 2;
+        else
+            iDireccionProyectil = 4; 
+        Text = "Choque Izquierda!";
     }
     
     /**
@@ -379,7 +391,11 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * Metodo para checar si el proyectil choca por su lado derecho
      */
     void proyectilChocaDerecha() {
-        iDireccionProyectil = (iDireccionProyectil == 2) ? 1 : 3;        
+        if (iDireccionProyectil == 2)
+            iDireccionProyectil = 1;
+        else
+            iDireccionProyectil = 3;  
+        Text = "Choque Derecha!";
     }
     
     
@@ -469,6 +485,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         g.drawString("Score: " + iScore, 20, 50);
         g.drawString("Vidas: " + iVidas, 20, 70);
         g.drawString("Direccion: " + iDireccionProyectil, 20, 90);
+        
+        g.drawString("X: " + proBola.getX(), 300, 50);
+        g.drawString("Y: " + proBola.getY(), 300, 70);
+        g.drawString("Colision: " + Text, 300, 90);
     }
 
     @Override
