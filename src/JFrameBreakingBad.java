@@ -199,14 +199,18 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // mueve a la Tabla de direccion
         switch (iDireccion) {
+            case 0: {
+                perTabla.para();
+                break;
+            }
             case 1: {
                 perTabla.izquierda();
-            }
-            break;
+                break;
+            }           
             case 2: {
                 perTabla.derecha();
+                break;
             }
-            break;
         }
         //mueve a la bola de direccion
         if (perBola.getX() > getWidth()) {
@@ -338,10 +342,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_A) {
+        if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
             iDireccion = 1;
         }
-        if(keyEvent.getKeyCode() == KeyEvent.VK_D) {
+        if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
             iDireccion = 2;
         }
     }

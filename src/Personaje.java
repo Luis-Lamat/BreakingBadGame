@@ -240,6 +240,16 @@ public class Personaje {
         this.setX(this.getX() - iVelocidad);
     }
     
+    /**
+     * para
+     * 
+     * Metodo que para al personaje 
+     */
+    public void para() {
+        this.setX(this.getX());
+        this.setY(this.getY());
+    }
+    
     /** 
      * colisiona
      * 
