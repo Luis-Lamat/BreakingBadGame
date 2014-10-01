@@ -16,7 +16,7 @@ public class Personaje {
 
     private int iX;     //posicion en x.       
     private int iY;     //posicion en y.
-    private int iVelocidad;   // velocidad
+    int iVelocidad;   // velocidad
     private ImageIcon imiIcono;	//icono.
 
     /**
@@ -238,16 +238,6 @@ public class Personaje {
      */
     public void izquierda() {
         this.setX(this.getX() - iVelocidad);
-    }
-    
-    /**
-     * para
-     * 
-     * Metodo que para al personaje 
-     */
-    public void para() {
-        this.setX(this.getX());
-        this.setY(this.getY());
     }
     
     /** 

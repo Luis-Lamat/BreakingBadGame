@@ -60,7 +60,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void init() {
         // hago el applet de un tamaño 500,500
-        setSize(900, 800);
+        setSize(675, 800);
         
         iScore = 0;
         iVidas = 5;
@@ -77,6 +77,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         perTabla = new Personaje((getWidth() / 2), (getHeight()  / 4) * 3,
                 Toolkit.getDefaultToolkit().getImage(urlImagenTabla));
         perTabla.setX((getWidth() / 2) - perTabla.getAncho() / 2);
+        perTabla.setVelocidad(6);
         
         // Crear imagen de Cajas
         creandoCajas();
@@ -200,7 +201,6 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         // mueve a la Tabla de direccion
         switch (iDireccion) {
             case 0: {
-                perTabla.para();
                 break;
             }
             case 1: {
@@ -354,7 +354,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         
-        
+        if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT || 
+           keyEvent.getKeyCode() == KeyEvent.VK_RIGHT ){
+            iDireccion = 0;
+        }
         
         //si presiono P (Pausar)
         if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
