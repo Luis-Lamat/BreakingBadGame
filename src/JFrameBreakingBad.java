@@ -74,14 +74,14 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         lstCajas = new LinkedList();
         
         // Crear imagen de Bola y le pone direccion y velocidad
-        URL urlImagenBola = this.getClass().getResource("Black Cube.jpg");
+        URL urlImagenBola = this.getClass().getResource("Bullet.png");
         proBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
                 Toolkit.getDefaultToolkit().getImage(urlImagenBola));
         proBola.setVelocidad(4);
         iDireccionProyectil = 1;
         
         // Crear imagen de Tabla y le pone velocidad
-        URL urlImagenTabla = this.getClass().getResource("BrownTable.jpg");
+        URL urlImagenTabla = this.getClass().getResource("HankUp.png");
         perTabla = new Personaje((getWidth() / 2), (getHeight()  / 4) * 3,
                 Toolkit.getDefaultToolkit().getImage(urlImagenTabla));
         perTabla.setVelocidad(6);
@@ -100,7 +100,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         int iValInicial = 25;
         int iSeparDePixeles = 5;
         
-        URL urlImagenCaja = this.getClass().getResource("BrownTable.jpg");
+        URL urlImagenCaja = this.getClass().getResource("MethBox.jpg");
         for(int iI = 0; iI < 20; iI++) {
             briCaja = new Brick(100, 100,
                 Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
