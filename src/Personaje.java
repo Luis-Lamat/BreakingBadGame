@@ -282,5 +282,29 @@ public class Personaje {
                
         // si se colisionan regreso verdadero, sino regreso falso
         return recObjeto.contains(iX, iY);
-    }    
+    }   
+    
+    /** 
+     * colisionaArriba
+     * 
+     * Metodo para revisar si un objeto <code>Personaje</code> colisiona con otro
+     * esto se logra con un objeto temporal de la clase <code>Rectangle</code>
+     * 
+     * @param aniObjeto es el objeto <code>Personaje</code> con el que se compara
+     * @return  un valor true si esta colisionando y false si no
+     * 
+     */
+    public boolean colisionaArriba(Personaje aniParametro) {
+        // creo un objeto rectangulo a partir de este objeto Personaje
+        Rectangle recObjeto = new Rectangle(this.getX(),this.getY(),
+                this.getAncho(), 5);
+        
+        // creo un objeto rectangulo a partir del objeto Personaje parametro
+        Rectangle recParametro = new Rectangle(aniParametro.getX(),
+                aniParametro.getY(), aniParametro.getAncho(),
+                aniParametro.getAlto());
+        
+        // si se colisionan regreso verdadero, sino regreso falso
+        return recObjeto.intersects(recParametro);
+    }
 }

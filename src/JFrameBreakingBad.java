@@ -73,18 +73,22 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         iVidas = 5;
         lstCajas = new LinkedList();
         
-        // Crear imagen de Bola y le pone direccion y velocidad
-        URL urlImagenBola = this.getClass().getResource("Bullet.png");
-        proBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
-                Toolkit.getDefaultToolkit().getImage(urlImagenBola));
-        proBola.setVelocidad(4);
-        iDireccionProyectil = 1;
-        
         // Crear imagen de Tabla y le pone velocidad
         URL urlImagenTabla = this.getClass().getResource("HankUp.png");
         perTabla = new Personaje((getWidth() / 2), (getHeight()  / 4) * 3,
                 Toolkit.getDefaultToolkit().getImage(urlImagenTabla));
         perTabla.setVelocidad(6);
+        
+        // Crear imagen de Bola y le pone direccion y velocidad
+        URL urlImagenBola = this.getClass().getResource("Bullet.png");
+        proBola = new Proyectil(0, 0,
+                Toolkit.getDefaultToolkit().getImage(urlImagenBola));
+        
+        proBola.setX(perTabla.getX() + ((perTabla.getAncho() / 2)
+                                        - proBola.getAncho() / 2));
+        proBola.setY(perTabla.getY() - proBola.getAlto());
+        proBola.setVelocidad(4);
+        iDireccionProyectil = 0;
         
         // Crear imagen de Cajas
         creandoCajas();
@@ -230,6 +234,12 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         *              | 
         */
         switch (iDireccionProyectil){
+            case 0: {
+                proBola.setX(perTabla.getX() + ((perTabla.getAncho() / 2)
+                                        - proBola.getAncho() / 2));
+                proBola.setY(perTabla.getY() - proBola.getAlto());
+                break;
+            }
             case 1: {
                 proBola.izquierda_arriba();
                 break;
@@ -312,10 +322,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * 
      */
     public void checaProyectilChocaConTabla(){
-        if (proBola.colisiona(perTabla)){
-            if (proBola.getY() + proBola.getAlto() >= perTabla.getY()){
-                proyectilChocaAbajo();
-            }
+        if (perTabla.colisionaArriba(proBola)){
+            proyectilChocaAbajo();            
         }
     }
     
@@ -333,19 +341,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             if (briCaja.getEstado() < 1){
                 if (briCaja.colisionaAbajo(proBola)){
                     proyectilChocaArriba();
-                    briCaja.setEstado(1);
+                    briCaja.setEstado(briCaja.getEstado()+1);
                 }
                 else if (briCaja.colisionaArriba(proBola)){
                     proyectilChocaAbajo();
-                    briCaja.setEstado(1);
+                    briCaja.setEstado(briCaja.getEstado()+1);
                 }
                 else if (briCaja.colisionaIzquierda(proBola)){
                     proyectilChocaDerecha();
-                    briCaja.setEstado(1);
+                    briCaja.setEstado(briCaja.getEstado()+1);
                 }
                 else if (briCaja.colisionaDerecha(proBola)){
                     proyectilChocaIzquierda();
-                    briCaja.setEstado(1);
+                    briCaja.setEstado(briCaja.getEstado()+1);
                 }
             }
         }
@@ -408,9 +416,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * dentro del <code>JFrame</code>
      */
     public void reposicionaProyectil(){
-        proBola.setX(getWidth() / 2);
-        proBola.setY(getHeight() / 2);
-        iDireccionProyectil = 1;
+        proBola.setX(perTabla.getX() + ((perTabla.getAncho() / 2)
+                                        - proBola.getAncho() / 2));
+        proBola.setY(perTabla.getY() - proBola.getAlto());
+        iDireccionProyectil = 0;
     }
 	
     /**
@@ -491,6 +500,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         g.drawString("X: " + proBola.getX(), 300, 50);
         g.drawString("Y: " + proBola.getY(), 300, 70);
         g.drawString("Colision: " + Text, 300, 90);
+        
+        if (iDireccionProyectil == 0){
+            g.drawString("Presiona SPACEBAR para lanzar la bala", 217, 3*getWidth()/4);
+        }
     }
 
     @Override
@@ -503,6 +516,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         }
         if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
             iDireccion = 2;
+        }
+        if (iDireccionProyectil == 0 && 
+            keyEvent.getKeyCode() == KeyEvent.VK_SPACE){
+            iDireccionProyectil = 1;
         }
     }
 

@@ -43,7 +43,7 @@ public class Brick extends Personaje {
     public boolean colisionaArriba(Personaje perParametro) {
         // creo un objeto rectangulo a partir de este objeto Personaje
         Rectangle recObjeto = new Rectangle(this.getX(),this.getY(),
-                this.getAncho(), 5);
+                this.getAncho(), 10);
         
         // creo un objeto rectangulo a partir del objeto Personaje parametro
         Rectangle recParametro = new Rectangle(perParametro.getX(),
@@ -67,7 +67,7 @@ public class Brick extends Personaje {
     public boolean colisionaAbajo(Personaje perParametro) {
         // creo un objeto rectangulo a partir de este objeto Personaje
         Rectangle recObjeto = new Rectangle(this.getX(), (this.getY() + 
-                (this.getAlto() - 5)), this.getAncho(), 5);
+                (this.getAlto() - 10)), this.getAncho(), 10);
         
         // creo un objeto rectangulo a partir del objeto Personaje parametro
         Rectangle recParametro = new Rectangle(perParametro.getX(),
@@ -91,7 +91,7 @@ public class Brick extends Personaje {
     public boolean colisionaIzquierda(Personaje perParametro) {
         // creo un objeto rectangulo a partir de este objeto Personaje
         Rectangle recObjeto = new Rectangle(this.getX(), (this.getY() + 
-                (this.getAlto() - 5)), 5, this.getAlto());
+                (this.getAlto() - 10)), 10, this.getAlto());
         
         // creo un objeto rectangulo a partir del objeto Personaje parametro
         Rectangle recParametro = new Rectangle(perParametro.getX(),
@@ -115,7 +115,7 @@ public class Brick extends Personaje {
     public boolean colisionaDerecha(Personaje perParametro) {
         // creo un objeto rectangulo a partir de este objeto Personaje
         Rectangle recObjeto = new Rectangle((this.getX()+ (this.getAncho() - 5))
-                , (this.getY() + (this.getAlto() - 5)), 5, this.getAlto());
+                , (this.getY() + (this.getAlto() - 10)), 10, this.getAlto());
         
         // creo un objeto rectangulo a partir del objeto Personaje parametro
         Rectangle recParametro = new Rectangle(perParametro.getX(),
