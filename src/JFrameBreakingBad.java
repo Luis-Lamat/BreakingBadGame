@@ -40,8 +40,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private LinkedList lstCajas;        // Lista Cajas
     private Proyectil proBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
-    private Brick briCaja;          // Objeto Caja de la clase personaje
+    private Brick briCaja;              // Objeto Caja de la clase personaje
     private boolean ChocaAbajoBrick;
+    private boolean bPausado;
     private String Text;
     //private boolean bPausado;         // Pausa
     
@@ -69,6 +70,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
         
+        bPausado = true;
         iScore = 0;
         iVidas = 5;
         lstCajas = new LinkedList();
@@ -155,9 +157,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                se checa si hubo colisiones para desaparecer jugadores o corregir
                movimientos y se vuelve a pintar todo
             */ 
-           
-            actualiza();
-            checaColision();
+            if (bPausado) {
+                actualiza();
+                checaColision();
+            }
             repaint();
             try	{
                 // El thread se duerme.
@@ -503,112 +506,105 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         //si presiono P (Pausar)
         if(keyEvent.getKeyCode() == KeyEvent.VK_P) { 
-           // bPausado = !bPausado;
+            bPausado = !bPausado;
         }
         // si presiona G (save_file)
-//        if(keyEvent.getKeyCode() == KeyEvent.VK_G) { 
-//            try {
-//                grabaArchivo();
-//            } catch (IOException ex) {
-//                Logger.getLogger(JFrameBreakingBad.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        // si presiona G (save_file)
-//        if(keyEvent.getKeyCode() == KeyEvent.VK_C) { 
-//            try {
-//                leeArchivo();
-//            } catch (IOException ex) {
-//                Logger.getLogger(JFrameBreakingBad.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        if(keyEvent.getKeyCode() == KeyEvent.VK_G) { 
+            try {
+                grabaArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(JFrameBreakingBad.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        // si presiona G (save_file)
+        if(keyEvent.getKeyCode() == KeyEvent.VK_C) { 
+            try {
+                leeArchivo();
+            } catch (IOException ex) {
+                Logger.getLogger(JFrameBreakingBad.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
     }
-//    public void grabaArchivo() throws IOException{
-//        // creo el objeto de salida para grabar en un archivo de texto
-//        PrintWriter prwSalida = new PrintWriter
-//                                (new FileWriter("save_file.txt"));
-//        // guardo en  linea 1 el score
-//    	prwSalida.println("Vidas: ");
-//        prwSalida.println(iVidas);
-//        // guardo en  linea Score
-//        prwSalida.println("Score: ");
-//        prwSalida.println(iScore);
-//        prwSalida.println("posNena: ");
-//        prwSalida.println(perNena.getX());
-//        prwSalida.println(perNena.getY());
-//        prwSalida.println(iDireccion);
-//        
-//        int iCount = 1;
-//        prwSalida.println("Caminadores:");
-//        for (Object lstCaminador : lstCaminadores) {
-//            Personaje perCaminador = (Personaje) lstCaminador;
-//            prwSalida.println(iCount + ")---------------------------");
-//            prwSalida.println(perCaminador.getX());
-//            prwSalida.println(perCaminador.getY());
-//            iCount++;
-//        }
-//        iCount = 1;
-//        prwSalida.println("Corredores:");
-//        for (Object lstCorredor : lstCorredores) {
-//                    Personaje perCorredor = (Personaje) lstCorredor;
-//                    prwSalida.println(iCount + ")---------------------------");
-//            prwSalida.println(perCorredor.getX());
-//            prwSalida.println(perCorredor.getY());
-//            iCount++;
-//        }
-//        prwSalida.println("END");
-//        // cierro el archivo
-//    	prwSalida.close();
-//    }
+    public void grabaArchivo() throws IOException{
+        // creo el objeto de salida para grabar en un archivo de texto
+        PrintWriter prwSalida = new PrintWriter
+                                (new FileWriter("save_file.txt"));
+        // guardo en  linea 1 el score
+    	prwSalida.println("Vidas: ");
+        prwSalida.println(iVidas);
+        // guardo en  linea Score
+        prwSalida.println("Score: ");
+        prwSalida.println(iScore);
+        prwSalida.println("Hank: ");
+        prwSalida.println(perTabla.getX());
+        prwSalida.println(perTabla.getY());
+        
+        prwSalida.println("Bullet: ");
+        prwSalida.println(proBola.getX());
+        prwSalida.println(proBola.getY());
+        prwSalida.println(iDireccionProyectil);
+        
+        
+        int iCount = 1;
+        prwSalida.println("Cajas:");
+        for (Object objObjeto : lstCajas) {
+            Brick briCaja  = (Brick) objObjeto;
+            prwSalida.println(iCount + ")---------------------------");
+            prwSalida.println(briCaja.getX());
+            prwSalida.println(briCaja.getY());
+            prwSalida.println(briCaja.getEstado());
+            iCount++;
+        }
+        prwSalida.println("END");
+        // cierro el archivo
+    	prwSalida.close();
+    }
 //
-//    public void leeArchivo() throws IOException{
-//        
-//        BufferedReader brwEntrada;
-//        
-//    	try{
-//            // creo el objeto de entrada a partir de un archivo de texto
-//            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
-//    	} catch (FileNotFoundException e){
-//            // si marca error grabo las posiciones actuales
-//            grabaArchivo();
-//            // lo vuelvo a abrir porque el objetivo es leer datos
-//            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
-//    	}
-//        
-//        // con el archivo abierto leo los datos que estan guardados
-//        // primero saco el score que esta en la linea 1
-//        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
-//    	iVidas = Integer.parseInt(brwEntrada.readLine());
-//        
-//        // despues las vidas
-//        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
-//    	iScore = Integer.parseInt(brwEntrada.readLine());
-//        
-//        // Lee las posiciones y direccion que tenia Nena
-//        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
-//        perNena.setX(Integer.parseInt(brwEntrada.readLine()));    
-//        perNena.setY(Integer.parseInt(brwEntrada.readLine()));
-//        iDireccion = Integer.parseInt(brwEntrada.readLine());
-//        
-//        // Se actualiza la posicion de los caminadores
-//        brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
-//        for (Object lstCaminador : lstCaminadores){
-//            brwEntrada.readLine(); // lee el string de titulo para no procesarlo
-//            Personaje perCaminador = (Personaje) lstCaminador;
-//            perCaminador.setX(Integer.parseInt(brwEntrada.readLine()));
-//            perCaminador.setY(Integer.parseInt(brwEntrada.readLine()));
-//        }
-//        
-//        // Se actualiza la posicion de los corredores
-//        brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
-//        for (Object lstCorredor : lstCorredores){
-//            brwEntrada.readLine(); // lee el string de titulo para no procesarlo
-//            Personaje perCorredor = (Personaje) lstCorredor;
-//            perCorredor.setX(Integer.parseInt(brwEntrada.readLine()));
-//            perCorredor.setY(Integer.parseInt(brwEntrada.readLine()));
-//        }
-//        
-//        brwEntrada.readLine(); // lee el string END
-//    	brwEntrada.close();
-//    }
+    public void leeArchivo() throws IOException{
+        
+        BufferedReader brwEntrada;
+        
+    	try{
+            // creo el objeto de entrada a partir de un archivo de texto
+            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
+    	} catch (FileNotFoundException e){
+            // si marca error grabo las posiciones actuales
+            grabaArchivo();
+            // lo vuelvo a abrir porque el objetivo es leer datos
+            brwEntrada = new BufferedReader(new FileReader("save_file.txt"));
+    	}
+        
+        // con el archivo abierto leo los datos que estan guardados
+        // primero saco el score que esta en la linea 1
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+    	iVidas = Integer.parseInt(brwEntrada.readLine());
+        
+        // despues las vidas
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+    	iScore = Integer.parseInt(brwEntrada.readLine());
+        
+        // Lee las posiciones y direccion que tenia Nena
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+        perTabla.setX(Integer.parseInt(brwEntrada.readLine()));    
+        perTabla.setY(Integer.parseInt(brwEntrada.readLine()));
+        
+        brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+        proBola.setX(Integer.parseInt(brwEntrada.readLine()));
+        proBola.setY(Integer.parseInt(brwEntrada.readLine()));
+        iDireccionProyectil = Integer.parseInt(brwEntrada.readLine());
+        
+        // Se actualiza la posicion de los caminadores
+        brwEntrada.readLine(); // lee el string de titulo "Caminadores:"
+        for (Object objObjeto : lstCajas){
+            brwEntrada.readLine(); // lee el string de titulo para no procesarlo
+            Brick briCaja = (Brick) objObjeto;
+            briCaja.setX(Integer.parseInt(brwEntrada.readLine()));
+            briCaja.setY(Integer.parseInt(brwEntrada.readLine()));
+            briCaja.setEstado(Integer.parseInt(brwEntrada.readLine()));
+        }
+        
+        brwEntrada.readLine(); // lee el string END
+    	brwEntrada.close();
+    }
 }
