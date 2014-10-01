@@ -214,18 +214,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             }
         }
         //mueve a la bola de direccion
-        if (perBola.getX() > getWidth()) {
-            perBola.izquierda();
-        }
-        else {
-            perBola.derecha();
-        }
-        if (perBola.getY() > getHeight()) {
-            perBola.arriba();
-        }
-        else {
-            perBola.abajo();
-        }
+        
         
         
     }
