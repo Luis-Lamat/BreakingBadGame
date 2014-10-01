@@ -38,9 +38,13 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private int iDireccion;             // Direccion de la Tabla
     private int iDireccionProyectil;    // Direccion del proyectil
     private LinkedList lstCajas;        // Lista Cajas
+    private LinkedList lstPowerUps;     // Lista de todos los power ups
     private Proyectil proBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
-    private Brick briCaja;              // Objeto Caja de la clase personaje
+    private int iDeltaY;                // entero para hacer q bricks se muevan
+    private int iTimer;                 // Timer para mover cajas para abajo
+    private int iIntervalo;             // Maneja el intervalo de tiempo para 
+                                        //  que los ladrillos bajen
     private boolean ChocaAbajoBrick;
     private boolean bPausado;
     private String Text;
@@ -67,6 +71,15 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         ChocaAbajoBrick = false;
         Text = "";
         
+        // # de pixeles que las cajas se mueven hacia abajo
+        iDeltaY = 5;
+        
+        // fijando el timer de movimiento de cajas en cero
+        iTimer = 0;
+        
+        // fijando el intervalo de tiempo por el cual los ladrillos bajan
+        iIntervalo = 200;
+        
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
         
@@ -74,6 +87,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         iScore = 0;
         iVidas = 5;
         lstCajas = new LinkedList();
+        
+        lstPowerUps = new LinkedList();
         
         // Crear imagen de Tabla y le pone velocidad
         URL urlImagenTabla = this.getClass().getResource("HankUp.png");
@@ -118,7 +133,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             
             for (int iR = 0; iR < iCols; iR++){
                 iX = iniX + ((iAncho + iSEPARACION_PIXELES) * iR);
-                briCaja = new Brick(iX, iY,
+                Brick briCaja = new Brick(iX, iY,
                           Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
                 lstCajas.add(briCaja);               
             }           
@@ -228,7 +243,28 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                 proBola.derecha_abajo();
                 break;
             } 
-        }  
+        }
+        
+        // Mnaeja el movimiento hacia abajo de las cajas
+        for (Object lstCaja : lstCajas){
+            Brick briCaja = (Brick) lstCaja;
+            
+            if (iTimer >= iIntervalo && briCaja.getEstado() < 3){
+                briCaja.setY(briCaja.getY() + iDeltaY);
+            }
+        }
+        if (iTimer >= iIntervalo){
+            iTimer = 0;
+        } else {
+            iTimer++;
+        }
+        
+        if (lstPowerUps.size() > 0){
+            for (Object lstPower : lstPowerUps){
+                Personaje perPower = (Personaje) lstPower;
+                perPower.abajo();
+            }
+        }
     }
     
     /**
@@ -279,10 +315,12 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         if (proBola.getY() < 0){
            proyectilChocaArriba();
         }
-        // si choca por debajo, que se disminuyan vidas y se reposicione
+        // si choca por debajo, que se disminuyan vidas y se reposiciona
+        // se baja tambien el intervalo de tiempo para  ue ladrillos bajen
         else if (proBola.getY() + proBola.getAlto() > getHeight()){
             reposicionaProyectil();
             iVidas--;
+            iIntervalo -= 40;
         }
     }
     
@@ -310,7 +348,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         for (Object lstCaja : lstCajas ){
             Brick briCaja = (Brick) lstCaja;
             
-            if (briCaja.getEstado() < 1){
+            if (briCaja.getEstado() < 3){
                 if (briCaja.colisionaAbajo(proBola)){
                     proyectilChocaArriba();
                     briCaja.setEstado(briCaja.getEstado()+1);
@@ -326,6 +364,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                 else if (briCaja.colisionaDerecha(proBola)){
                     proyectilChocaIzquierda();
                     briCaja.setEstado(briCaja.getEstado()+1);
+                }
+                if (briCaja.getEstado() == 3 && briCaja.has_power_up()){                    
+                    agregaRandomPowerUp(briCaja);
                 }
             }
         }
@@ -393,6 +434,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         proBola.setY(perTabla.getY() - proBola.getAlto());
         iDireccionProyectil = 0;
     }
+    
+    public void agregaRandomPowerUp(Brick briCaja1){
+        URL urlImagenBalaDevuelta = this.getClass().getResource("Bullet.png");
+        Personaje perPowerUp = new Personaje(0,0,
+                Toolkit.getDefaultToolkit().getImage(urlImagenBalaDevuelta));
+        perPowerUp.setVelocidad(3);
+        
+        perPowerUp.setY(briCaja1.getY());
+        perPowerUp.setX(briCaja1.getX() + (briCaja1.getAncho() / 2) - 
+                                         perPowerUp.getAncho() / 2);
+        
+        lstPowerUps.add(perPowerUp);
+    }
 	
     /**
      * paint
@@ -452,9 +506,17 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             
             for (Object objCajas : lstCajas) {
                 Brick briCaja = (Brick) objCajas;
-                if (briCaja.getEstado() < 1){
+                if (briCaja.getEstado() < 3){
                     g.drawImage(briCaja.getImagen() , briCaja.getX(),
                        briCaja.getY(), this);                   
+                }
+            }
+            
+            if (lstPowerUps.size() > 0){
+                for (Object lstPower : lstPowerUps){
+                    Personaje perPower = (Personaje) lstPower;
+                    g.drawImage(perPower.getImagen() , perPower.getX(),
+                       perPower.getY(), this);
                 }
             }
         }            
