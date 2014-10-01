@@ -38,7 +38,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private int iDireccion;             // Direccion de la Tabla
     private int iDireccionProyectil;    // Direccion del proyectil
     private LinkedList lstCajas;        // Lista Cajas
-    private Personaje perBola;          // Objeto Bola de la clase personaje
+    private Proyectil perBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
     private Personaje perCaja;          // Objeto Caja de la clase personaje
     //private boolean bPausado;         // Pausa
@@ -69,9 +69,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // Crear imagen de Bola
         URL urlImagenBola = this.getClass().getResource("Black Cube.jpg");
-        perBola = new Personaje(getWidth() / 2, getHeight()  / 2,
+        perBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
                 Toolkit.getDefaultToolkit().getImage(urlImagenBola));
-        perBola.arriba();
+        iDireccionProyectil = 1;
         
         // Crear imagen de Tabla
         URL urlImagenTabla = this.getClass().getResource("BrownTable.jpg");
@@ -213,8 +213,36 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                 break;
             }
         }
-        //mueve a la bola de direccion
         
+        /* Mueve a la bola de direccion:
+        *
+        *              |
+        *         1    |    2
+        *              | 
+        *      --------+---------    
+        *              |
+        *         3    |    4
+        *              | 
+        */
+        switch (iDireccionProyectil){
+            case 1: {
+                perBola.izquierda_arriba();
+                break;
+            }
+            case 2: {
+                perBola.derecha_arriba();
+                break;
+            }
+            case 3: {
+                perBola.izquierda_abajo();
+                break;
+            }
+            case 4: {
+                perBola.derecha_abajo();
+                break;
+            }
+            
+        }
         
         
     }
