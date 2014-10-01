@@ -17,9 +17,13 @@ public class Brick extends Personaje {
     // 2 = choque 2 veces
     // 3 = desaparece
     private int iEstado = 0;
+    private boolean bHasPowerUp;
     
     public Brick(int iX, int iY, Image imaImagen) {
         super(iX, iY, imaImagen);
+        int x = (int)((Math.random() * 10) + 1);
+        if (x == 7) bHasPowerUp = true;
+        else bHasPowerUp = false;
     }
     
     public void setEstado(int iE){
@@ -28,6 +32,10 @@ public class Brick extends Personaje {
     
     public int getEstado(){
         return this.iEstado;
+    }
+    
+    public boolean has_power_up(){
+        return bHasPowerUp;
     }
     
     /** 
