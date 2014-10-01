@@ -282,24 +282,15 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         // checa si proyectil colisiona con las paredes
         // de la derecha y la izquierda...
         if (perBola.getX() < 0){
-            if (iDireccionProyectil == 1)
-                iDireccionProyectil = 2;
-            else
-                iDireccionProyectil = 4; 
+            proyectilChocaIzquierda();
         }        
-        else if(perBola.getX() > getWidth()){
-            if (iDireccionProyectil == 2)
-                iDireccionProyectil = 1;
-            else
-                iDireccionProyectil = 3;             
+        else if(perBola.getX() + perBola.getAncho() > getWidth()){
+            proyectilChocaDerecha();
         }
         
         // checa si el proyectil choca con el techo...
         if (perBola.getY() < 0){
-            if (iDireccionProyectil == 2)
-                iDireccionProyectil = 4;
-            else
-                iDireccionProyectil = 3;            
+           proyectilChocaArriba();
         }
         // si choca por debajo, que se disminuyan vidas y se reposicione
         else if (perBola.getY() + perBola.getAlto() > getHeight()){
@@ -318,14 +309,42 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     public void checaProyectilChocaConTabla(){
         if (perBola.colisiona(perTabla)){
             if (perBola.getY() + perBola.getAlto() >= perTabla.getY()){
-                ColisionTablaProy = true;
-                if (iDireccionProyectil == 4){
-                    iDireccionProyectil = 2;
-                }            
-                else
-                    iDireccionProyectil = 1;
+                proyectilChocaAbajo();
             }
         }
+    }
+    
+    
+    /**
+     * proyectilChocaArriba
+     * Metodo para checar si el proyectil choca por su lado superior
+     */
+    void proyectilChocaArriba() {
+        iDireccionProyectil = (iDireccionProyectil == 2) ? 4 : 3;     
+    }
+    
+    /**
+     * proyectilChocaArriba
+     * Metodo para checar si el proyectil choca por su lado inferior
+     */
+    void proyectilChocaAbajo() {
+        iDireccionProyectil = (iDireccionProyectil == 4) ? 2 : 1;
+    }
+    
+    /**
+     * proyectilChocaArriba
+     * Metodo para checar si el proyectil choca por su lado izquierdo
+     */
+    void proyectilChocaIzquierda() {
+        iDireccionProyectil = (iDireccionProyectil == 1) ? 2 : 4;    
+    }
+    
+    /**
+     * proyectilChocaArriba
+     * Metodo para checar si el proyectil choca por su lado derecho
+     */
+    void proyectilChocaDerecha() {
+        iDireccionProyectil = (iDireccionProyectil == 2) ? 1 : 3;        
     }
     
     
