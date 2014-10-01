@@ -16,7 +16,7 @@ public class Personaje {
 
     private int iX;     //posicion en x.       
     private int iY;     //posicion en y.
-    int iVelocidad;   // velocidad
+    private int iVelocidad;   // velocidad
     private ImageIcon imiIcono;	//icono.
 
     /**

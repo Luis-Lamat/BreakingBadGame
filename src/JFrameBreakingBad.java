@@ -38,9 +38,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private int iDireccion;             // Direccion de la Tabla
     private int iDireccionProyectil;    // Direccion del proyectil
     private LinkedList lstCajas;        // Lista Cajas
-    private Proyectil perBola;          // Objeto Bola de la clase personaje
+    private Proyectil proBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
-    private Personaje perCaja;          // Objeto Caja de la clase personaje
+    private Brick briCaja;          // Objeto Caja de la clase personaje
+    private boolean ChocaAbajoBrick;
     //private boolean bPausado;         // Pausa
     
     /* objetos de audio */
@@ -61,6 +62,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void init() {
         
+        ChocaAbajoBrick = false;
+        
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
         
@@ -70,9 +73,9 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // Crear imagen de Bola y le pone direccion y velocidad
         URL urlImagenBola = this.getClass().getResource("Black Cube.jpg");
-        perBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
+        proBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
                 Toolkit.getDefaultToolkit().getImage(urlImagenBola));
-        perBola.setVelocidad(3);
+        proBola.setVelocidad(4);
         iDireccionProyectil = 1;
         
         // Crear imagen de Tabla y le pone velocidad
@@ -97,36 +100,36 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         URL urlImagenCaja = this.getClass().getResource("BrownTable.jpg");
         for(int iI = 0; iI < 20; iI++) {
-            perCaja = new Personaje(100, 100,
+            briCaja = new Brick(100, 100,
                 Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
             // Valores de X y Y despues de crear 
             if(lstCajas.size() > 0) {
                 if (iI < 6) {
-                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
-                    perCaja.setY(100);
+                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
+                    briCaja.setY(100);
                 } 
                 else if (iI == 7) {
-                    perCaja.setX(iValInicial);
-                    perCaja.setY(100 + perCaja.getAlto() + iSeparDePixeles);
+                    briCaja.setX(iValInicial);
+                    briCaja.setY(100 + briCaja.getAlto() + iSeparDePixeles);
                     }
                 else if (iI < 13 && iI > 7) {
-                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
-                    perCaja.setY(100 + perCaja.getAlto() + iSeparDePixeles);
+                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
+                    briCaja.setY(100 + briCaja.getAlto() + iSeparDePixeles);
                 }
                 else if (iI == 14) {
-                    perCaja.setX(iValInicial);
-                    perCaja.setY(100 + perCaja.getAlto() * 2 + 
+                    briCaja.setX(iValInicial);
+                    briCaja.setY(100 + briCaja.getAlto() * 2 + 
                             iSeparDePixeles * 2);
                 }
                 else if (iI < 20 && iI > 14) {
-                    perCaja.setX(iXTemp + perCaja.getAncho() + iSeparDePixeles);
-                    perCaja.setY(100 + perCaja.getAlto() * 2 + 
+                    briCaja.setX(iXTemp + briCaja.getAncho() + iSeparDePixeles);
+                    briCaja.setY(100 + briCaja.getAlto() * 2 + 
                             iSeparDePixeles * 2);
                 }
-                lstCajas.add(perCaja);
+                lstCajas.add(briCaja);
                 //se guarda valor de X temporal para siguiente caja
-                iXTemp = perCaja.getX();
-                //iYTemp = perCaja.getY();
+                iXTemp = briCaja.getX();
+                //iYTemp = briCaja.getY();
                 ValorFor = iI;
                 if (iI == 6 || iI == 14) {
                     iXTemp = iValInicial;
@@ -135,12 +138,12 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             }
             //Valores de X y Y default
             else {
-                perCaja.setX(iValInicial);
-                perCaja.setY(100);
+                briCaja.setX(iValInicial);
+                briCaja.setY(100);
                 //se guarda valor de X temporal para siguiente caja
-                iXTemp = perCaja.getX();
-                iYTemp = perCaja.getY();
-                lstCajas.add(perCaja);
+                iXTemp = briCaja.getX();
+                iYTemp = briCaja.getY();
+                lstCajas.add(briCaja);
             }
         }
     }
@@ -202,20 +205,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // mueve a la Tabla de direccion
         switch (iDireccion) {
-            case 0: {
-                break;
-            }
+            case 0: { break; }         // se para
             case 1: {
-                perTabla.izquierda();
+                perTabla.izquierda();  // se mueve a la izquierda
                 break;
             }           
             case 2: {
-                perTabla.derecha();
+                perTabla.derecha();    // se mueve a la derecha
                 break;
             }
         }
         
-        /* Mueve a la bola de direccion:
+        /* Mueve al proyectil de direccion 
+        *          en diagonal:
         *
         *              |
         *         1    |    2
@@ -227,19 +229,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         */
         switch (iDireccionProyectil){
             case 1: {
-                perBola.izquierda_arriba();
+                proBola.izquierda_arriba();
                 break;
             }
             case 2: {
-                perBola.derecha_arriba();
+                proBola.derecha_arriba();
                 break;
             }
             case 3: {
-                perBola.izquierda_abajo();
+                proBola.izquierda_abajo();
                 break;
             }
             case 4: {
-                perBola.derecha_abajo();
+                proBola.derecha_abajo();
                 break;
             } 
         }  
@@ -282,19 +284,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     public void checaProyectilChocaConMuros(){
         // checa si proyectil colisiona con las paredes
         // de la derecha y la izquierda...
-        if (perBola.getX() < 0){
+        if (proBola.getX() < 0){
             proyectilChocaIzquierda();
         }        
-        else if(perBola.getX() + perBola.getAncho() > getWidth()){
+        else if(proBola.getX() + proBola.getAncho() > getWidth()){
             proyectilChocaDerecha();
         }
         
         // checa si el proyectil choca con el techo...
-        if (perBola.getY() < 0){
+        if (proBola.getY() < 0){
            proyectilChocaArriba();
         }
         // si choca por debajo, que se disminuyan vidas y se reposicione
-        else if (perBola.getY() + perBola.getAlto() > getHeight()){
+        else if (proBola.getY() + proBola.getAlto() > getHeight()){
             reposicionaProyectil();
             iVidas--;
         }
@@ -308,8 +310,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * 
      */
     public void checaProyectilChocaConTabla(){
-        if (perBola.colisiona(perTabla)){
-            if (perBola.getY() + perBola.getAlto() >= perTabla.getY()){
+        if (proBola.colisiona(perTabla)){
+            if (proBola.getY() + proBola.getAlto() >= perTabla.getY()){
                 proyectilChocaAbajo();
             }
         }
@@ -324,21 +326,25 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */    
     public void checaProyectilChocaConBricks(){
         for (Object lstCaja : lstCajas ){
-            Personaje perCaja = (Personaje) lstCaja;
-            if (perBola.colisiona(perCaja)){
-                if (perBola.getY() >= perCaja.getY() + perCaja.getAlto()){
+            Brick briCaja = (Brick) lstCaja;
+            if (proBola.colisiona(briCaja) && briCaja.getEstado() < 1){
+                if (proBola.getY() <= briCaja.getY() + briCaja.getAlto() && 
+                   (iDireccionProyectil == 1 || iDireccionProyectil == 2)){
                     proyectilChocaArriba();
                 }
-                else if (perBola.getY() + perBola.getAlto() >= perCaja.getY()){
+                else if (proBola.getY() + proBola.getAlto() >= briCaja.getY() &&
+                        (iDireccionProyectil == 3 || iDireccionProyectil == 4)){
+                    ChocaAbajoBrick = true;
                     proyectilChocaAbajo();
                 }
 
-                if (perBola.getX() + perBola.getAncho() >= perCaja.getX()){
+                if (proBola.getX() + proBola.getAncho() >= briCaja.getX()){
                     proyectilChocaDerecha();
                 }
-                else if(perBola.getX() >= perCaja.getX() + perCaja.getAncho()){
+                else if(proBola.getX() >= briCaja.getX() + briCaja.getAncho()){
                     proyectilChocaIzquierda();
-                }           
+                }
+                briCaja.setEstado(1);
             }
         }
     }
@@ -384,8 +390,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * dentro del <code>JFrame</code>
      */
     public void reposicionaProyectil(){
-        perBola.setX(getWidth() / 2);
-        perBola.setY(getHeight() / 2);
+        proBola.setX(getWidth() / 2);
+        proBola.setY(getHeight() / 2);
         iDireccionProyectil = 1;
     }
 	
@@ -426,7 +432,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     
     /**
-     * paint
+     * paint_buffer
      * 
      * Metodo sobrescrito de la clase <code>Applet</code>,
      * heredado de la clase Container.<P>
@@ -437,22 +443,23 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void paint_buffer(Graphics g) {
         // si la imagen ya se cargo
-        if (perBola != null && perTabla != null && lstCajas.size() > 0) {
+        if (proBola != null && perTabla != null && lstCajas.size() > 0) {
             
-            g.drawImage(perBola.getImagen() , perBola.getX(),
-                    perBola.getY(), this);
+            g.drawImage(proBola.getImagen() , proBola.getX(),
+                    proBola.getY(), this);
             
             g.drawImage(perTabla.getImagen() , perTabla.getX(),
                     perTabla.getY(), this);
             
             for (Object objCajas : lstCajas) {
-                Personaje perCaja = (Personaje) objCajas;
-                g.drawImage(perCaja.getImagen() , perCaja.getX(),
-                    perCaja.getY(), this);
-            
-        }
-            
-        } // sino se ha cargado se dibuja un mensaje 
+                Brick briCaja = (Brick) objCajas;
+                if (briCaja.getEstado() < 1){
+                    g.drawImage(briCaja.getImagen() , briCaja.getX(),
+                       briCaja.getY(), this);                   
+                }
+            }
+        }            
+        // sino se ha cargado se dibuja un mensaje 
         else {
                 //Da un mensaje mientras se carga el dibujo	
                 g.drawString("No se cargo la imagen..", 20, 20);
@@ -461,7 +468,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         g.setColor(Color.red);
         g.drawString("Score: " + iScore, 20, 50);
         g.drawString("Vidas: " + iVidas, 20, 70);
-        g.drawString("For: "+ ValorFor, 200, 50);
+        g.drawString("Direccion: " + iDireccionProyectil, 20, 90);
     }
 
     @Override

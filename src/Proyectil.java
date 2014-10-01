@@ -8,7 +8,7 @@ import java.awt.Image;
  * Modela la definición de todos los objetos de tipo
  * <code>Proyectil</code>
  *
- * @author uis Lamadrid & Jeronimo Martinez
+ * @author Luis Lamadrid & Jeronimo Martinez
  *
  */
 public class Proyectil extends Personaje {
