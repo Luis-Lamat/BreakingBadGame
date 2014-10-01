@@ -324,7 +324,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     
     /**
-     * proyectilChocaArriba
+     * proyectilChocaAbajo
      * Metodo para checar si el proyectil choca por su lado inferior
      */
     void proyectilChocaAbajo() {
@@ -332,7 +332,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     
     /**
-     * proyectilChocaArriba
+     * proyectilChocaIzquierda
      * Metodo para checar si el proyectil choca por su lado izquierdo
      */
     void proyectilChocaIzquierda() {
@@ -340,7 +340,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     }
     
     /**
-     * proyectilChocaArriba
+     * proyectilChocaDerecha
      * Metodo para checar si el proyectil choca por su lado derecho
      */
     void proyectilChocaDerecha() {
