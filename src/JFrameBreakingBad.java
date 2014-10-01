@@ -41,6 +41,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     private Proyectil perBola;          // Objeto Bola de la clase personaje
     private Personaje perTabla;         // Objeto Tabla de la clase personaje
     private Personaje perCaja;          // Objeto Caja de la clase personaje
+    private boolean ColisionTablaProy;  // TEST
     //private boolean bPausado;         // Pausa
     
     /* objetos de audio */
@@ -60,6 +61,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * a usarse en el <code>Applet</code> y se definen funcionalidades.
      */
     public void init() {
+        ColisionTablaProy = false;
+        
         // hago el applet de un tamaño 500,500
         setSize(675, 800);
         
@@ -67,17 +70,17 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         iVidas = 5;
         lstCajas = new LinkedList();
         
-        // Crear imagen de Bola
+        // Crear imagen de Bola y le pone direccion y velocidad
         URL urlImagenBola = this.getClass().getResource("Black Cube.jpg");
         perBola = new Proyectil(getWidth() / 2, getHeight()  / 2,
                 Toolkit.getDefaultToolkit().getImage(urlImagenBola));
+        perBola.setVelocidad(3);
         iDireccionProyectil = 1;
         
-        // Crear imagen de Tabla
+        // Crear imagen de Tabla y le pone velocidad
         URL urlImagenTabla = this.getClass().getResource("BrownTable.jpg");
         perTabla = new Personaje((getWidth() / 2), (getHeight()  / 4) * 3,
                 Toolkit.getDefaultToolkit().getImage(urlImagenTabla));
-        perTabla.setX((getWidth() / 2) - perTabla.getAncho() / 2);
         perTabla.setVelocidad(6);
         
         // Crear imagen de Cajas
@@ -240,22 +243,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             case 4: {
                 perBola.derecha_abajo();
                 break;
-            }
-            
-        }
-        
-        
+            } 
+        }  
     }
     
     /**
      * checaColision
      * 
-     * Metodo usado para checar la colision del objeto elefante
-     * con las orillas del <code>Applet</code>.
+     * Metodo usado para checar la colision de los objetos del JFrame
+     * con las orillas del <code>JFrame</code> y entre si.
      * 
      */
     public void checaColision(){
-        //si tabla choca con 
+        //si tabla choca con las paredes
         if(perTabla.getX() < 0) {
             perTabla.setX(0);
         }
@@ -263,6 +263,82 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             perTabla.setX(getWidth() - perTabla.getAncho());
         }
         
+        // llamada al metodo colisiona de proyectil con muros
+        checaProyectilChocaConMuros();
+        
+        // llamada al metodo coliisona proyectil con tabla
+        checaProyectilChocaConTabla();
+    }
+    
+    
+    /**
+     * checaProyectilChocaConMuros
+     * 
+     * Metodo usado para checar la colision del objeto Proyectil
+     * con las orillas del <code>JFrame</code>.
+     * 
+     */
+    public void checaProyectilChocaConMuros(){
+        // checa si proyectil colisiona con las paredes
+        // de la derecha y la izquierda...
+        if (perBola.getX() < 0){
+            if (iDireccionProyectil == 1)
+                iDireccionProyectil = 2;
+            else
+                iDireccionProyectil = 4; 
+        }        
+        else if(perBola.getX() > getWidth()){
+            if (iDireccionProyectil == 2)
+                iDireccionProyectil = 1;
+            else
+                iDireccionProyectil = 3;             
+        }
+        
+        // checa si el proyectil choca con el techo...
+        if (perBola.getY() < 0){
+            if (iDireccionProyectil == 2)
+                iDireccionProyectil = 4;
+            else
+                iDireccionProyectil = 3;            
+        }
+        // si choca por debajo, que se disminuyan vidas y se reposicione
+        else if (perBola.getY() + perBola.getAlto() > getHeight()){
+            reposicionaProyectil();
+            iVidas--;
+        }
+    }
+    
+    /**
+     * checaProyectilChocaConMuros
+     * 
+     * Metodo usado para checar la colision del objeto Proyectil
+     * con la tabla (jugador) del <code>JFrame</code>.
+     * 
+     */
+    public void checaProyectilChocaConTabla(){
+        if (perBola.colisiona(perTabla)){
+            if (perBola.getY() + perBola.getAlto() >= perTabla.getY()){
+                ColisionTablaProy = true;
+                if (iDireccionProyectil == 4){
+                    iDireccionProyectil = 2;
+                }            
+                else
+                    iDireccionProyectil = 1;
+            }
+        }
+    }
+    
+    
+    /**
+     * reposicionaProyectil
+     * 
+     * Metodo usado para reposicionar el objeto Proyectil
+     * dentro del <code>JFrame</code>
+     */
+    public void reposicionaProyectil(){
+        perBola.setX(getWidth() / 2);
+        perBola.setY(getHeight() / 2);
+        iDireccionProyectil = 1;
     }
 	
     /**
@@ -337,6 +413,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         g.setColor(Color.red);
         g.drawString("Score: " + iScore, 20, 50);
         g.drawString("Vidas: " + iVidas, 20, 70);
+        g.drawString("Colision?: " + ColisionTablaProy, 20, 90);      
         g.drawString("For: "+ ValorFor, 200, 50);
     }
 
