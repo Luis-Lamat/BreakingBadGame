@@ -130,9 +130,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // Crear imagen de Cajas en la posicion inicial de 255 , 100
         creandoCajas(25,100,4,6);
-        
-        creandoCajas(25,300,4,6);
-        
+                
         // se define el background en color amarillo
 	setBackground (Color.white);
         addKeyListener(this);
@@ -143,7 +141,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         int iSEPARACION_PIXELES = 5;
         int iX;
         int iY;
-        URL urlImagenCaja = this.getClass().getResource("MethBox.jpg");
+        URL urlImagenCaja = this.getClass().getResource("Caja1.jpg");
         Brick briCajaAux  = new Brick(0,0,
                           Toolkit.getDefaultToolkit().getImage(urlImagenCaja));
         int iAlto  = briCajaAux.getAlto();
@@ -490,7 +488,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         for(Object lstPowerUp : lstPowerUps){
             Personaje perPowerUp = (Personaje) lstPowerUp;
             if (perPowerUp.getY() + perPowerUp.getAlto() <= 0){
-             
+                // quitar el objeto de la lista
             }
             else if (perTabla.colisionaArriba(perPowerUp)){
                 iDireccionProyectil = 0;
@@ -515,12 +513,18 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                         this.getSize().height);
                 graGraficaApplet = imaImagenApplet.getGraphics ();
         }
+        
+        // creo imagen para el background
+        URL urlImagenBackground = this.getClass().getResource("background.jpg");
+        Image imaImagenBackground = Toolkit.getDefaultToolkit()
+                                           .getImage(urlImagenBackground);
+
+        // Despliego la imagen
+        graGraficaApplet.drawImage(imaImagenBackground, 0, 0, 
+                getWidth(), getHeight(), this);
 
         // Actualiza la imagen de fondo.
         graGraficaApplet.setColor (getBackground ());
-        graGraficaApplet.fillRect (0, 0, this.getSize().width, 
-                this.getSize().height);
-        
         
         // Actualiza el Foreground.
         graGraficaApplet.setColor (getForeground());
@@ -559,9 +563,24 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             
             for (Object objCajas : lstCajas) {
                 Brick briCaja = (Brick) objCajas;
-                if (briCaja.getEstado() < 3){
+                if (briCaja.getEstado() == 0){
                     g.drawImage(briCaja.getImagen() , briCaja.getX(),
-                       briCaja.getY(), this);                   
+                       briCaja.getY(), this);                     
+                }
+                else if (briCaja.getEstado() == 1){
+                    URL urlImagenBola = this.getClass().getResource("caja2.jpg");               
+                    briCaja.setImagen(Toolkit.getDefaultToolkit().getImage(urlImagenBola));
+                    g.drawImage(briCaja.getImagen() , briCaja.getX(),
+                       briCaja.getY(), this);                     
+                }
+                else if (briCaja.getEstado() == 2){
+                    URL urlImagenBola = this.getClass().getResource("caja3.jpg");               
+                    briCaja.setImagen(Toolkit.getDefaultToolkit().getImage(urlImagenBola));
+                    g.drawImage(briCaja.getImagen() , briCaja.getX(),
+                       briCaja.getY(), this); 
+                }
+                else if (briCaja.getEstado() == 3){
+                    continue;
                 }
             }
             

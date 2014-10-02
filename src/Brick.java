@@ -74,7 +74,7 @@ public class Brick extends Personaje {
      */
     public boolean colisionaAbajo(Personaje perParametro) {
         // creo un objeto rectangulo a partir de este objeto Personaje
-        Rectangle recObjeto = new Rectangle(this.getX(), (this.getY() + 
+        Rectangle recObjeto = new Rectangle(this.getX(), (this.getY() - 
                 (this.getAlto() - 10)), this.getAncho(), 10);
         
         // creo un objeto rectangulo a partir del objeto Personaje parametro
