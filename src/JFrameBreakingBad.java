@@ -54,6 +54,13 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
     /* objetos de audio */
     private SoundClip aucSonidoSuccess; // Objeto AudioClip sonido Caminador
     private SoundClip aucSonidoFailure; // Objeto AudioClip sonido Corredor
+    //Objeto de la clase Animacion para el manejo de la animación
+	private Animacion anim;
+	
+	//Variables de control de tiempo de la animación
+	private long tiempoActual;
+	private long tiempoInicial;
+	int posX, posY;
     
     public JFrameBreakingBad(){
         init();
@@ -69,6 +76,19 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void init() {
         
+        //Se cargan las imágenes(cuadros) para la animación
+		Image raton1 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("Bullet1.png"));
+		Image raton2 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("Bullet2.png"));
+		Image raton3 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("Bullet3.png"));
+		Image raton4 = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("Bullet4.png"));
+		
+		
+		//Se crea la animación
+		anim = new Animacion();
+		anim.sumaCuadro(raton1, 300);
+		anim.sumaCuadro(raton2, 300);
+		anim.sumaCuadro(raton3, 300);
+		anim.sumaCuadro(raton4, 300);
         ChocaAbajoBrick = false;
         Text = "";
         
@@ -98,7 +118,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         perTabla.setVelocidad(6);
         
         // Crear imagen de Bola y le pone direccion y velocidad
-        URL urlImagenBola = this.getClass().getResource("Bullet.png");
+        URL urlImagenBola = this.getClass().getResource("Bullet1.png");
         proBola = new Proyectil(0, 0,
                 Toolkit.getDefaultToolkit().getImage(urlImagenBola));
         
@@ -168,6 +188,8 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void run () {
         // se realiza el ciclo del juego en este caso nunca termina
+        tiempoActual = System.currentTimeMillis();
+        
         while (iVidas > 0) {
             /* mientras dure el juego, se actualizan posiciones de jugadores
                se checa si hubo colisiones para desaparecer jugadores o corregir
@@ -176,6 +198,7 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
             if (bPausado) {
                 actualiza();
                 checaColision();
+                
             }
             repaint();
             try	{
@@ -197,6 +220,16 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      */
     public void actualiza() {
         
+        //Determina el tiempo que ha transcurrido desde que el Applet inicio su ejecución
+         long tiempoTranscurrido =
+             System.currentTimeMillis() - tiempoActual;
+            
+         //Guarda el tiempo actual
+       	 tiempoActual += tiempoTranscurrido;
+
+         //Actualiza la animación en base al tiempo transcurrido
+         anim.actualiza(tiempoTranscurrido); 
+         
         // mueve a la Tabla de direccion
         switch (iDireccion) {
             case 0: { break; }         // se para
@@ -512,11 +545,14 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
      * 
      */
     public void paint_buffer(Graphics g) {
+        
+        if (anim != null) {
+            g.drawImage(anim.getImagen(),proBola.getX() , proBola.getY(), this);
+        }
         // si la imagen ya se cargo
-        if (proBola != null && perTabla != null && lstCajas.size() > 0) {
+        if (perTabla != null && lstCajas.size() > 0) {
             
-            g.drawImage(proBola.getImagen() , proBola.getX(),
-                    proBola.getY(), this);
+            
             
             g.drawImage(perTabla.getImagen() , perTabla.getX(),
                     perTabla.getY(), this);
