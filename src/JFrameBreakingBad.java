@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -291,6 +292,10 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
         
         // llamada al metodo coliisona proyectil con ladrillos
         checaProyectilChocaConBricks();
+        
+        
+        // llamada al metodo colisiona power ups
+        checaColisionPowerUps();
     }
     
     
@@ -446,6 +451,18 @@ public class JFrameBreakingBad extends JFrame implements Runnable, KeyListener {
                                          perPowerUp.getAncho() / 2);
         
         lstPowerUps.add(perPowerUp);
+    }
+    
+    public void checaColisionPowerUps(){
+        for(Object lstPowerUp : lstPowerUps){
+            Personaje perPowerUp = (Personaje) lstPowerUp;
+            if (perPowerUp.getY() + perPowerUp.getAlto() <= 0){
+             
+            }
+            else if (perTabla.colisionaArriba(perPowerUp)){
+                iDireccionProyectil = 0;
+            }
+        }
     }
 	
     /**
